@@ -1,5 +1,6 @@
 ﻿using Grocery.Core.Interfaces.Repositories;
 using Grocery.Core.Models;
+using System.Collections.Generic;
 
 namespace Grocery.Core.Data.Repositories
 {
@@ -52,5 +53,42 @@ namespace Grocery.Core.Data.Repositories
             listItem = item;
             return listItem;
         }
+
+        public List<BestSellingProducts> GetBestSellingProducts(int topX = 5)
+        {
+
+            List<BestSellingProducts> bestSellingProductsList = new List<BestSellingProducts>();
+
+            //groceryListItems.OrderByDescending(p => p.Amount).Take(topX).ToList();
+            var tmpList = groceryListItems.GroupBy(item => item.ProductId);
+
+            foreach (var group in tmpList)
+            {
+                var distinctId = group.Key;
+                var count = group.Count();
+                //gO is in dit geval group Object, oftwel een representatief object van de groepering van objecten.
+                var gO = group.First();
+                BestSellingProducts product = new BestSellingProducts(gO.ProductId, gO.Name, gO.Amount, count, 0);
+                bestSellingProductsList.Add(product);
+            }
+
+            bestSellingProductsList.OrderByDescending(bSP => bSP.NrOfSells);
+
+            foreach (var product in bestSellingProductsList)
+            {
+                product.Ranking = bestSellingProductsList.IndexOf(product) + 1;
+            }
+
+
+            return bestSellingProductsList;
+
+        //    public BestSellingProducts(int productId, string name, int stock, int nrOfSells, int ranking) : base(productId, name)
+        //{
+        //    Stock = stock;
+        //    NrOfSells = nrOfSells;
+        //    Ranking = ranking;
+        //}
+
+    }
     }
 }
