@@ -11,7 +11,6 @@
             <Label Text="Best verkochte producten" FontSize="Large" HorizontalOptions="Center" VerticalOptions="Center" />
         </Grid>
     </Shell.TitleView>
-
     <Border Stroke="#C49B33" StrokeThickness="4" Padding="10" Margin="10" HorizontalOptions="Center">
         <CollectionView ItemsSource="{Binding Products}" Margin="20" HorizontalOptions="Center">
             <CollectionView.ItemsLayout>
@@ -25,7 +24,11 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <!-- PLaats hier de header velden voor de tabel-->
+                    <!-- Header velden voor de tabel -->
+                    <Label Grid.Column="0" Text="Rang" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                    <Label Grid.Column="1" Text="Product Naam" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                    <Label Grid.Column="2" Text="Voorraad" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                    <Label Grid.Column="3" Text="Aantal Verkopen" FontAttributes="Bold" HorizontalTextAlignment="Center" />
                 </Grid>
             </CollectionView.Header>
             <CollectionView.ItemTemplate>
@@ -37,7 +40,11 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <!-- PLaats hier de datavelden voor de tabel-->
+                        <!-- Data velden voor de tabel -->
+                        <Label Grid.Column="0" Text="{Binding Ranking}" HorizontalTextAlignment="Center" />
+                        <Label Grid.Column="1" Text="{Binding Name}" HorizontalTextAlignment="Center" />
+                        <Label Grid.Column="2" Text="{Binding Stock}" HorizontalTextAlignment="Center" />
+                        <Label Grid.Column="3" Text="{Binding NrOfSells}" HorizontalTextAlignment="Center" />
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
