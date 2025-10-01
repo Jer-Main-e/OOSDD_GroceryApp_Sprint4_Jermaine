@@ -51,7 +51,41 @@ namespace Grocery.Core.Services
 
         public List<BestSellingProducts> GetBestSellingProducts(int topX = 5)
         {
-            return _groceriesRepository.GetBestSellingProducts(topX);
+            List<BestSellingProducts> bestSellingProductsList = new List<BestSellingProducts>();
+
+            var allGroceries = _groceriesRepository.GetAll().GroupBy(g => g.ProductId);
+            int hoeveelheid;
+            foreach ( var g in allGroceries)
+            {
+                //We willen niet meer dan 5 producten in de best verkochte productenlijst zien, 
+                //dus daarom breekt de loop wanneer er 5 of meer producten in de BestSellingProducts lijst staan.
+                if (bestSellingProductsList.Count > topX)
+                {
+                    break;
+                }
+                var firstGrocery = g.First();
+                hoeveelheid = 0;
+                foreach (var value in g)
+                {
+                    hoeveelheid += value.Amount;
+                }
+                //Men haalt de standaard gegevens van een bepaald type product op met behulp van de _productRepository, 
+                //omdat deze gegevens niet op te halen zijn met de _groceriesRepository.
+                bestSellingProductsList.Add(new BestSellingProducts(firstGrocery.ProductId, 
+                    _productRepository.Get(firstGrocery.ProductId).Name, 
+                    _productRepository.Get(firstGrocery.ProductId).Stock, 
+                    hoeveelheid, 
+                    0));
+            }
+
+            bestSellingProductsList = bestSellingProductsList.OrderByDescending(p => p.NrOfSells).ToList();
+
+            foreach (var product in bestSellingProductsList)
+            {
+                product.Ranking = bestSellingProductsList.IndexOf(product) + 1;
+            }
+
+            return bestSellingProductsList;
         }
 
         private void FillService(List<GroceryListItem> groceryListItems)
