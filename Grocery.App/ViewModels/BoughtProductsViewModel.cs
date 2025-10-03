@@ -27,13 +27,20 @@ namespace Grocery.App.ViewModels
             if (newValue == null) return;
 
             BoughtProductsList.Clear();
-            var boughtProducts = _boughtProductsService.Get(newValue.Id)
-                .Where(bp => bp.Product.Id == newValue.Id);
+
+            var boughtProducts = _boughtProductsService.Get(newValue.Id);
+
+            // Debug: kijk hoeveel producten er worden gevonden
+            System.Diagnostics.Debug.WriteLine($"Product selected: {newValue.Name} (ID: {newValue.Id})");
+            System.Diagnostics.Debug.WriteLine($"Found {boughtProducts.Count} bought products");
 
             foreach (var bp in boughtProducts)
             {
+                System.Diagnostics.Debug.WriteLine($"Adding: Client={bp.Client?.Name}, GroceryList={bp.GroceryList?.Name}");
                 BoughtProductsList.Add(bp);
             }
+
+            System.Diagnostics.Debug.WriteLine($"BoughtProductsList now has {BoughtProductsList.Count} items");
         }
 
         [RelayCommand]
