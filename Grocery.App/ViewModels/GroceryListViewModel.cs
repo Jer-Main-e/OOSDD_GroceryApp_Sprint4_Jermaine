@@ -10,12 +10,19 @@ namespace Grocery.App.ViewModels
     {
         public ObservableCollection<GroceryList> GroceryLists { get; set; }
         private readonly IGroceryListService _groceryListService;
+        private readonly GlobalViewModel _global;
 
-        public GroceryListViewModel(IGroceryListService groceryListService) 
+        [ObservableProperty]
+        private Client client;
+
+        public GroceryListViewModel(IGroceryListService groceryListService, GlobalViewModel global)
         {
             Title = "Boodschappenlijst";
             _groceryListService = groceryListService;
+            _global = global;
             GroceryLists = new(_groceryListService.GetAll());
+
+            Client = _global.Client;
         }
 
         [RelayCommand]
@@ -24,6 +31,21 @@ namespace Grocery.App.ViewModels
             Dictionary<string, object> paramater = new() { { nameof(GroceryList), groceryList } };
             await Shell.Current.GoToAsync($"{nameof(Views.GroceryListItemsView)}?Titel={groceryList.Name}", true, paramater);
         }
+
+        [RelayCommand]
+        public async Task ShowBoughtProducts()
+        {
+            if (Client?.UserRole == Client.Role.Admin)
+            {
+                await Shell.Current.GoToAsync(nameof(Views.BoughtProductsView));
+            }
+            else
+            {
+                // Optioneel: toon een melding dat alleen admins dit kunnen zien
+                await Application.Current.MainPage.DisplayAlert("Geen toegang", "Alleen admins kunnen dit overzicht bekijken.", "OK");
+            }
+        }
+
         public override void OnAppearing()
         {
             base.OnAppearing();

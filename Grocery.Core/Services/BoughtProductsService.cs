@@ -35,13 +35,26 @@ namespace Grocery.Core.Services
 
             //voordat men door de lijst met gekochte producten gaat kijken gaat men eerst
             //bepalen welke lijsten van Admins zijn, want deze gegevens willen we niet opslaan.
+            var allViableClients = _clientRepository.GetAll().Where(client => client.UserRole == Client.Role.None).ToList();
 
             
 
-            _groceryListItemsRepository.GetAll().Where(item => item.ProductId == productId);
-            
+            var allViableGroceryListsIds = _groceryListRepository.GetAll().Where(groceryList => allViableClients.Select(vC => vC.Id).Contains(groceryList.ClientId)).Select(groceryList => groceryList.Id).ToList();
 
 
+            foreach(int id in allViableGroceryListsIds)
+            {
+                var currentGroceryList = _groceryListRepository.Get(id);
+                var allViableProducts = _groceryListItemsRepository.GetAllOnGroceryListId(id);
+                foreach (var viableProduct in allViableProducts) 
+                {
+                    if (viableProduct.ProductId != productId) { 
+                        continue;
+                    }
+                    BoughtProducts boughtProduct = new BoughtProducts(_clientRepository.Get(currentGroceryList.ClientId), currentGroceryList, viableProduct.Product);
+                    boughtProductsList.Add(boughtProduct);
+                }
+            }
             return boughtProductsList;
         }
     }
