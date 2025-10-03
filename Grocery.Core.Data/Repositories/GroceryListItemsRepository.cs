@@ -1,5 +1,6 @@
 ﻿using Grocery.Core.Interfaces.Repositories;
 using Grocery.Core.Models;
+using System.Collections.Generic;
 
 namespace Grocery.Core.Data.Repositories
 {
@@ -51,6 +52,11 @@ namespace Grocery.Core.Data.Repositories
             GroceryListItem? listItem = groceryListItems.FirstOrDefault(i => i.Id == item.Id);
             listItem = item;
             return listItem;
+        }
+
+        public List<BestSellingProducts> GetBestSellingProducts(int topX = 5)
+        {
+            return GetBestSellingProducts(topX);
         }
     }
 }
